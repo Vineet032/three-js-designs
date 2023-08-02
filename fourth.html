@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Three.js Metallic Ball</title>
+    <style>
+      body {
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+        background-color: black;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+          "three/examples/jsm/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <script type="module">
+      import * as THREE from 'three';
+      import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const geometry = new THREE.SphereGeometry(2, 32, 32);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        metalness: 1,
+        roughness: 0.2,
+      });
+
+      const particleCount = 1000;
+      const spreadDistance = 1000;
+
+      for (let i = 0; i < particleCount; i++) {
+        const sphere = new THREE.Mesh(geometry, material);
+        const x = Math.random() * spreadDistance - spreadDistance / 2;
+        const y = Math.random() * spreadDistance - spreadDistance / 2;
+        const z = Math.random() * spreadDistance - spreadDistance / 2;
+        sphere.position.set(x, y, z);
+        scene.add(sphere);
+      }
+
+      const light = new THREE.DirectionalLight(0xffffff, 2);
+      light.position.set(0, 1, 10);
+      scene.add(light);
+
+      const lensFlareTexture = new THREE.TextureLoader().load('texture/sun.png'); 
+      const lensFlare = new THREE.Sprite(new THREE.SpriteMaterial({ map: lensFlareTexture }));
+      lensFlare.scale.set(40, 30, 1); 
+      light.add(lensFlare);
+
+      camera.position.z = 100;
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enableZoom = true;
+
+      let audioContext;
+      let audioSource;
+      let audioAnalyser;
+      let dataArray;
+
+      function initAudio() {
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+
+        const audioElement = new Audio();
+        audioElement.src = 'music/superspacy-atmosphere-106826.mp3'; 
+        audioElement.loop = true;
+        audioElement.crossOrigin = 'anonymous';
+        audioSource = audioContext.createMediaElementSource(audioElement);
+        audioSource.connect(audioContext.destination);
+
+        audioAnalyser = audioContext.createAnalyser();
+        audioSource.connect(audioAnalyser);
+
+        const bufferLength = audioAnalyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        audioElement.play();
+      }
+
+      function updateSceneWithAudio() {
+
+        if (audioAnalyser) {
+          audioAnalyser.getByteFrequencyData(dataArray);
+
+
+          if (dataArray) {
+            const frequencyAverage = getAverage(dataArray);
+
+            const scale = 1 + frequencyAverage / 128; 
+            sphere.scale.set(scale, scale, scale);
+          }
+        }
+      }
+
+      function getAverage(array) {
+        let sum = 0;
+        for (let i = 0; i < array.length; i++) {
+          sum += array[i];
+        }
+        return sum / array.length;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        controls.update();
+        scene.rotation.z += 0.005;
+        light.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.005);
+        updateSceneWithAudio();
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      initAudio();
+    </script>
+  </body>
+</html>

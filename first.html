@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Interactive Metallic Cube</title>
+    <style>
+      body { margin: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer();
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const planegeometry = new THREE.PlaneGeometry(5,5)
+      const planematerial = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+      const plane = new THREE.Mesh( planegeometry, planematerial );
+      plane.rotation.x = 8;
+      plane.rotation.y = 0;
+      plane.position.y = -1;
+      scene.add( plane );
+
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.4 });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      // Function to load the environment map
+      function loadEnvironmentMap() {
+        return new Promise((resolve, reject) => {
+          const loader = new THREE.CubeTextureLoader();
+          loader.setPath('texture/'); // Set the path to the environment map images
+          loader.load([
+            '1.jpg',
+            '2.jpg',
+            '3.jpg',
+            '4.png',
+            '5.jpg',
+            '6.jpg',
+          ], resolve, undefined, reject);
+        });
+      }
+
+      // Load the environment map and assign it to the material
+      loadEnvironmentMap().then((envMap) => {
+        material.envMap = envMap;
+        material.needsUpdate = true;
+        cube.material = material;
+
+        // Render the scene
+        camera.position.z = 5;
+        function animateCube() {
+          requestAnimationFrame(animateCube);
+          cube.rotation.x += 0.01;
+          cube.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        }
+        animateCube();
+      }).catch((error) => {
+        console.error('Failed to load environment map:', error);
+      });
+      let isMouseDown = false;
+      let prevMouseX = 0;
+      let prevMouseY = 0;
+
+      // Mouse down event handler
+      const onMouseDown = (event) => {
+        if (event.button === 0) {
+          isMouseDown = true;
+          prevMouseX = event.clientX;
+          prevMouseY = event.clientY;
+        }
+      };
+
+      // Mouse up event handler
+      const onMouseUp = (event) => {
+        if (event.button === 0) {
+          isMouseDown = false;
+        }
+      };
+
+      // Mouse move event handler
+      const onMouseMove = (event) => {
+        if (isMouseDown) {
+          const mouseDeltaX = event.clientX - prevMouseX;
+          const mouseDeltaY = event.clientY - prevMouseY;
+
+          // Set the camera's position based on mouse movement
+          camera.position.x += mouseDeltaX * 0.01;
+          camera.position.y -= mouseDeltaY * 0.01;
+          camera.lookAt(scene.position);
+
+          prevMouseX = event.clientX;
+          prevMouseY = event.clientY;
+        }
+      };
+
+      // Register mouse event listeners
+      window.addEventListener('mousedown', onMouseDown, false);
+      window.addEventListener('mouseup', onMouseUp, false);
+      window.addEventListener('mousemove', onMouseMove, false);
+
+      
+    </script>
+  </body>
+</html>

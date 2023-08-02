@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700;800&display=swap');
+*{
+    margin: auto;
+    padding: 0;
+}
+body {
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+    /*font-family: 'Noto Sans', sans-serif;*/
+    font-family: 'Orbitron', sans-serif;
+  }
+  canvas {
+    position: absolute; /* Position the canvas absolutely within the wrapper container */
+    top: 0;
+    left: 0;
+    z-index: 0; /* Place the canvas at the bottom of the stacking order */
+  }
+  .nav {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 10px 20px; 
+    box-sizing: border-box;
+    /*box-shadow: 0 2px 10px 0px rgba(0, 0, 0, 0.2), 0 0 11px 0px rgba(255, 255, 255, 0.2);*/
+  }
+  
+  .logo {
+    flex: 1;
+    padding-left: 40px;
+  }
+  .logo a{
+    text-decoration: none;
+    color: #ffffff;
+  }
+  
+  .menu ul {
+    list-style: none;
+    display: flex; 
+  }
+  
+  .menu ul li {
+    padding: 10px;
+    text-align: center;
+  }
+  .menu ul li a{
+    text-decoration: none;
+    color: #ffffff;
+  }
+  /* Add CSS styles for the animation */
+.logo a {
+    position: relative;
+    display: inline-block;
+    overflow: hidden; /* Hide the overflowing characters */
+  }
+  
+  .logo a span {
+    position: relative;
+    display: inline-block; /* Display the spans in a row */
+    opacity: 1; /* Start with opacity 1 (visible) */
+    transform: translateY(0); /* Start with no translation */
+  }
+  
+  /* CSS animation keyframes for the hover effect */
+  @keyframes showlogoLetters {
+    0% {
+      opacity: 0;
+      transform: translateY(100%); /* Move spans below the link */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* Return to the original position */
+    }
+  }
+  
+  /* Apply the animation on hover */
+  .logo a:hover span {
+    animation: showlogoLetters 0.2s ease forwards; /* Play animation on hover and keep the final state */
+  }
+  
+  /* Staggered animation delay for each span */
+  .logo a span:nth-child(1) {
+    animation-delay: 0ms; /* No delay for the first span */
+  }
+  
+  .logo a span:nth-child(2) {
+    animation-delay: 50ms; /* Delay the appearance of the second span by 50ms */
+  }
+  
+  .logo a span:nth-child(3) {
+    animation-delay: 100ms; /* Delay the appearance of the third span by 100ms */
+  }
+  
+  /* Add more nth-child styles for additional letters as needed */
+  
+/* Add CSS styles for the animation */
+.item a {
+    position: relative;
+    display: inline-block;
+    overflow: hidden; /* Hide the overflowing characters */
+  }
+  
+  .item a span {
+    position: relative;
+    display: inline-block; /* Display the spans in a row */
+    opacity: 1; /* Start with opacity 1 (visible) */
+    transform: translateY(0); /* Start with no translation */
+  }
+  
+  /* CSS animation keyframes for the hover effect */
+  @keyframes showLetters {
+    0% {
+      opacity: 0;
+      transform: translateY(100%); /* Move spans below the link */
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0); /* Return to the original position */
+    }
+  }
+  
+  /* Apply the animation on hover */
+  .item a:hover span {
+    animation: showLetters 0.2s ease forwards; /* Play animation on hover and keep the final state */
+  }
+  
+  /* Staggered animation delay for each span */
+  .item a span:nth-child(1) {
+    animation-delay: 0ms; /* No delay for the first span */
+  }
+  
+  .item a span:nth-child(2) {
+    animation-delay: 50ms; /* Delay the appearance of the second span by 50ms */
+  }
+  
+  .item a span:nth-child(3) {
+    animation-delay: 100ms; /* Delay the appearance of the third span by 100ms */
+  }
+  
+  /* Add more nth-child styles for additional letters as needed */
+  .center-section{
+    position: relative;
+    top: 180px;
+    background-color: transparent;
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+    padding-top: 50px;
+  }
+  .center-section .center-text{
+    width: 50%;
+  }
+  .center-section .center-text p{
+   color: #ffffff;
+  }
+  .center-section .center-text h1 {
+    color: #ffffff;
+    width: 370px;
+    padding: 15px 0px 15px 0px;
+    border: 1px solid #ffffff;
+    background:#000000;
+    margin-bottom: 30px;
+    cursor: pointer;
+    position: relative; /* Add position relative to the h1 element */
+  }
+  
+  @property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  
+ .center-text h1::before,
+  .center-text h1::after {
+    content: "";
+    position: absolute;
+    inset: -0.2rem;
+    z-index: -1;
+    background: linear-gradient(var(--angle), #032146, #C3F2FF, #b00); /* Add color stops to the gradient */
+    animation: rotate 10s linear infinite;
+    border-radius: 10px; /* Optional: Add border-radius for a rounded effect */
+  }
+  
+  .center-text h1::after {
+    filter: blur(10px);
+  }
+  
+  @keyframes rotate {
+    0% {
+      --angle: 0deg;
+    }
+    100% {
+      --angle: 360deg;
+    }
+  }
+  
